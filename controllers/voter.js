@@ -1,8 +1,7 @@
 const { getVoterById_service, getVoters_service, updateVoter_service, deleteVoter_service } = require("../services/voter")
 
 //param
-const getVoterById = (req, res) => {
-    const id = req.params.id;
+const getVoterById = (req, res, next, id) => {
     getVoterById_service(id, (err, results) => {
         if (err) {
             console.log(err);
@@ -14,12 +13,16 @@ const getVoterById = (req, res) => {
                 message: "Record not Found"
             });
         }
-        results.password = undefined;
-        return res.json({
-            success: 1,
-            data: results
-        });
+        // results.password = undefined;
+        req.profile = results;
+        console.log(req.profile);
+        next();
     });
+}
+
+const getVoter = (req, res) => {
+    console.log(req.proile);
+    return res.json(req.proile);
 }
 
 const getVoters = (req, res) => {
@@ -73,4 +76,4 @@ const deleteVoter = (req, res) => {
     });
 }
 
-module.exports = { getVoterById, getVoters, updateVoter, deleteVoter };
+module.exports = { getVoterById, getVoters, updateVoter, deleteVoter, getVoter };

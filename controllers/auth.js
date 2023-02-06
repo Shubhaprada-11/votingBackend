@@ -2,12 +2,12 @@ const jwt = require('jsonwebtoken');
 const expressJwt = require('express-jwt');
 require('dotenv').config();
 const bcrypt = require("bcrypt");
-const { getVoterByEmail_service } = require('../services/voter');
+const { getVoterByEmail_service, signUp_service, getVoterById_service } = require('../services/voter');
 
 
 const signIn = (req, res) => {
     const body = req.body;
-    getVoterByEmail_service(body.email, (err, result) => {
+    getVoterById_service(body.voterID, (err, result) => {
         if (err) {
             console.log(err);
             return res.json({
@@ -15,12 +15,13 @@ const signIn = (req, res) => {
                 data: "email not in db"
             });
         }
-        if (!result) {
-            return res.json({
-                success: 0,
-                data: "Invalid email or password"
-            });
-        }
+        console.log(result);
+        // if (!result) {
+        //     return res.json({
+        //         success: 0,
+        //         data: "Invalid email or password"
+        //     });
+        // }
         bcrypt.compare(body.password, result.password, function (err, r) {
             // result == true
             if (r) {
@@ -42,7 +43,7 @@ const signIn = (req, res) => {
             } else {
                 return res.json({
                     success: 0,
-                    data: "Invalid email or password"
+                    data: "Invalid voterID or password"
                 });
             }
         });
@@ -55,26 +56,28 @@ const signIn = (req, res) => {
 
 }
 
-const signUp = () => {
+const signUp = (req, res) => {
     const body = req.body;
     const saltRounds = 10;
     bcrypt.hash(body.password, saltRounds, function (err, hash) {
         body.password = hash
-    });
-    signUp_service(body, (err, result) => {
-        if (err) {
-            console.log(err);
-            return res.json({
-                success: 0,
-                data: "Not saving in dbs"
+        console.log(body);
+        signUp_service(body, (err, result) => {
+            if (err) {
+                console.log(err);
+                return res.json({
+                    success: 0,
+                    data: "Not saving in dbs"
+                });
+            }
+            return res.status(200).json({
+                success: 1,
+                data: result
             });
-        }
-        return res.status(200).json({
-            success: 1,
-            data: result
-        });
 
-    })
+        })
+    });
+
 }
 
 const signOut = (req, res) => {
@@ -89,6 +92,8 @@ const isSignedIn = expressJwt({
 });
 
 const isAuthenticated = (req, res, next) => {
+    console.log(req.profile, "1234");
+    console.log(req.auth);
     let checker = req.profile && req.auth && req.profile._id == req.auth._id;
     if (!checker) {
         return res.status(403).json({

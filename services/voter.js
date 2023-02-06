@@ -1,7 +1,7 @@
 const pool = require("../database");
 
 const signUp_service = (data, callBack) => {
-    pool.query("", [], (err, result, fields) => {
+    pool.query("INSERT INTO voter VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [data.voterID, data.walletAddress, data.name, data.fathername, data.mothername, data.gender, data.address, data.DOB, data.age, data.constituency, data.password], (err, result, fields) => {
         if (err) {
             callBack(err);
         }
@@ -10,20 +10,22 @@ const signUp_service = (data, callBack) => {
 }
 
 const getVoterById_service = (data, callBack) => {
-    pool.query("", [], (err, result, fields) => {
+    pool.query("SELECT * FROM voter WHERE voterID=?", [data], (err, result, fields) => {
         if (err) {
             callBack(err);
         }
-        return callBack(null, result);
+        return callBack(null, result[0]);
     })
 }
 
 const getVoterByEmail_service = (data, callBack) => {
-    pool.query("", [], (err, result, fields) => {
+    console.log(data);
+    pool.query("SELECT * FROM voter WHERE email=?", [data], (err, result, fields) => {
         if (err) {
             callBack(err);
         }
-        return callBack(null, result);
+        console.log(result);
+        return callBack(null, result[0]);
     })
 }
 
