@@ -16,12 +16,12 @@ const signIn = (req, res) => {
             });
         }
         console.log(result);
-        // if (!result) {
-        //     return res.json({
-        //         success: 0,
-        //         data: "Invalid email or password"
-        //     });
-        // }
+        if (!result) {
+            return res.json({
+                success: 0,
+                data: "Invalid email or password"
+            });
+        }
         bcrypt.compare(body.password, result.password, function (err, r) {
             // result == true
             if (r) {
