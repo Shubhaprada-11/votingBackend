@@ -29,7 +29,7 @@ const signIn = (req, res) => {
                 const token = jwt.sign({ id: result.id }, process.env.SECRET);
                 res.cookie("token", token, { expire: new Date() + 9999 });
                 return res.json({
-                    token, success: 1,
+                    token, success: 1, result,
                     message: "login successfully"
                 });
                 // const jsontoken = sign({ result: result }, "qwe1234", {

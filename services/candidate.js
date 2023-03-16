@@ -7,6 +7,6 @@ exports.getAllCanditatesFromConstituency_service = (data, callBack) => {
             callBack(err);
         }
         console.log(result);
-        return callBack(null, result[0]);
+        return callBack(null, result);
     })
 }
